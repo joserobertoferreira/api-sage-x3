@@ -74,8 +74,8 @@ class CustomTokenRefreshSerializer(TokenRefreshSerializer):
     def validate(self, attrs):
         attrs['refresh'] = attrs.pop('refresh_token')
         data = super().validate(attrs)
-        # data['refresh_token'] = data.pop('refresh')
-        # data['token'] = data.pop('access')
+        data['refresh_token'] = data.pop('refresh')
+        data['token'] = data.pop('access')
         return data
 
 
