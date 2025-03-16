@@ -1,6 +1,11 @@
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import (
+    TokenBlacklistSerializer,
+    TokenObtainPairSerializer,
+    TokenRefreshSerializer,
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -52,3 +57,32 @@ class UpdatePasswordSerializer(serializers.ModelSerializer):
         del validated_data['password_confirmation']
         validated_data['password'] = make_password(validated_data['password'])
         return super().update(instance, validated_data)
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['refresh_token'] = data.pop('refresh')
+        data['token'] = data.pop('access')
+        return data
+
+
+class CustomTokenRefreshSerializer(TokenRefreshSerializer):
+    refresh_token = serializers.CharField(required=True)
+    refresh = None
+
+    def validate(self, attrs):
+        attrs['refresh'] = attrs.pop('refresh_token')
+        data = super().validate(attrs)
+        # data['refresh_token'] = data.pop('refresh')
+        # data['token'] = data.pop('access')
+        return data
+
+
+class CustomTokenBlacklistSerializer(TokenBlacklistSerializer):
+    refresh_token = serializers.CharField(required=True)
+    refresh = None
+
+    def validate(self, attrs):
+        attrs['refresh'] = attrs.pop('refresh_token')
+        return super().validate(attrs)

@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 
 from decouple import Csv, config
@@ -150,4 +151,19 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+}
+
+# Authentication settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(
+        seconds=config('ACCESS_TOKEN_LIFETIME_SECONDS', cast=int)
+    ),
+    'REFRESH_TOKEN_LIFETIME': timedelta(
+        seconds=config('REFRESH_TOKEN_LIFETIME_SECONDS', cast=int)
+    ),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'TOKEN_OBTAIN_SERIALIZER': 'accounts.serializers.CustomTokenObtainPairSerializer',
+    'TOKEN_REFRESH_SERIALIZER': 'accounts.serializers.CustomTokenRefreshSerializer',
+    'TOKEN_BLACKLIST_SERIALIZER': 'accounts.serializers.CustomTokenBlacklistSerializer',
 }

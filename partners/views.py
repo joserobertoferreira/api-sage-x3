@@ -1,3 +1,4 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -7,6 +8,8 @@ from partners.serializers import PartnerSerializer
 
 
 class PartnerListView(APIView):
+    permission_classes = [IsAuthenticated]
+
     @staticmethod
     def get(request):
         queryset = Partner.objects.filter()
